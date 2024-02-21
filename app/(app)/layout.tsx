@@ -2,12 +2,12 @@
 
 import { assistantAtom, userThreadAtom } from "@/atoms";
 import Navbar from "@/components/Navbar";
-// import NotificationModal from "@/components/NotificationModal";
-// import useServiceWorker from "@/hooks/useServiceWorker";
+import NotificationModal from "@/components/NotificationModal";
+import useServiceWorker from "@/hooks/useServiceWorker";
 import { Assistant, UserThread } from "@prisma/client";
 import axios from "axios";
 import { useAtom } from "jotai";
-import { use, useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import toast, { Toaster } from "react-hot-toast";
 
 export default function AppLayout({ children }: { children: React.ReactNode }) {
@@ -15,12 +15,12 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
   const [, setUserThread] = useAtom(userThreadAtom);
   const [assistant, setAssistant] = useAtom(assistantAtom);
 
-//   // State
-//   const [isNotificationModalVisible, setIsNotificationModalVisible] =
-//     useState(false);
+  // State
+  const [isNotificationModalVisible, setIsNotificationModalVisible] =
+    useState(false);
 
-//   // Hooks
-//   useServiceWorker();
+  // Hooks
+  useServiceWorker();
 
   useEffect(() => {
     if (assistant) return;
@@ -75,12 +75,12 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
     getUserThread();
   }, [setUserThread]);
 
-//   useEffect(() => {
-//     if ("Notification" in window) {
-//       setIsNotificationModalVisible(Notification.permission === "default");
-//       console.log("Notification permission:", Notification.permission);
-//     }
-//   }, []);
+  useEffect(() => {
+    if ("Notification" in window) {
+      setIsNotificationModalVisible(Notification.permission === "default");
+      console.log("Notification permission:", Notification.permission);
+    }
+  }, []);
 
   const saveSubscription = useCallback(async () => {
     const serviceWorkerRegistration = await navigator.serviceWorker.ready;
@@ -103,32 +103,32 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
     }
   }, []);
 
-//   useEffect(() => {
-//     if ("Notification" in window && "serviceWorker" in navigator) {
-//       if (Notification.permission === "granted") {
-//         saveSubscription();
-//       }
-//     }
-//   }, [saveSubscription]);
+  useEffect(() => {
+    if ("Notification" in window && "serviceWorker" in navigator) {
+      if (Notification.permission === "granted") {
+        saveSubscription();
+      }
+    }
+  }, [saveSubscription]);
 
-//   const handleNotificationModalClose = (didConstent: boolean) => {
-//     setIsNotificationModalVisible(false);
+  const handleNotificationModalClose = (didConstent: boolean) => {
+    setIsNotificationModalVisible(false);
 
-//     if (didConstent) {
-//       toast.success("You will now receive notifications.");
-//     }
-//   };
+    if (didConstent) {
+      toast.success("You will now receive notifications.");
+    }
+  };
 
   return (
     <div className="flex flex-col w-full h-full">
       <Navbar />
       {children}
-      {/* {isNotificationModalVisible && (
+      {isNotificationModalVisible && (
         <NotificationModal
           onRequestClose={handleNotificationModalClose}
           saveSubscription={saveSubscription}
         />
-      )} */}
+      )}
       <Toaster />
     </div>
   );
